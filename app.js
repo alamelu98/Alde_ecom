@@ -20,10 +20,16 @@ const helmet=require("helmet");
 const cors=require("cors")
 const xss=require("xss-clean")
 const rateLimiter=require("express-rate-limit")
+
+app.use(helmet())
+app.use(cors())
+app.use(xss())
+
 app.get("/",(req,res)=>
 {
     res.send("Ecom api/")
 })
+
 
 app.use("/login",userproductRoute)
 app.use("/admin",adminauth,adminRoute)
@@ -41,9 +47,7 @@ app.use(rateLimiter(
         legacyHeaders: false, // Disable the `X-RateLimit-*` headers
     }
 ))
-app.use(helmet())
-app.use(cors())
-app.use(xss())
+
 
 
 app.use(notfound)
