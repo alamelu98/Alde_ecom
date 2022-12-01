@@ -40,7 +40,7 @@ const viewAllCustomer=asyncWrapper(async(req,res)=>
 {
     const allUsers=await CustomerLogin.find()
 
-    res.status(200).json({users:allUsers})
+    res.status(200).json({items:allUsers})
 })
 
 module.exports={loginProduct,enterlogin,viewAllCustomer}
