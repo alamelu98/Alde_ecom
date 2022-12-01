@@ -8,7 +8,7 @@ const UnAuthError=require("../error/unauthenticated")
 const viewProduct=asyncWrapper(async(req,res)=>
 {
     const product=await Product.find()
-    res.status(200).json({message:"viewProduct",productsare:product})
+    res.status(200).json({message:"viewProduct",items:product})
 })
 const createProduct=asyncWrapper(async(req,res)=>
 {
