@@ -11,7 +11,7 @@ const BadRequestError=require("../error/badrequest")
 const viewOrder=asyncWrapper(async(req,res)=>
 {
     const orders=await Order.find()
-    res.status(200).json({message:"viewOrder",allorders:orders})
+    res.status(200).json({message:"viewOrder",items:orders})
 })
 const updateOrder=asyncWrapper(async(req,res)=>
 {
