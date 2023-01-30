@@ -1,26 +1,43 @@
 require("dotenv").config()
+
 const express=require("express")
-const app=express()
-const port= process.env.PORT || 3000
-
-const notfound=require("./middleware/notfound")
-const connectDB=require("./db/connect")
-const errorHandlerMiddleware=require("./middleware/errorHandler")
-const adminauth=require("./middleware/Adminauth")
-const customerauth=require("./middleware/Customerauth")
- const userproductRoute=require("./routes/userproduct")
-const customerregisterRoute=require("./routes/userRegister")
+const app= express()
+const port=process.env.PORT||3000
+const printRoute=require("./routes/prints")
+const originalsRoute=require("./routes/originals")
+const cartRoute=require("./routes/cart")
+const userSignupRoute=require("./routes/usersignup")
 const adminRoute=require("./routes/admin")
-const customerRoute=require("./routes/customer")
-
-
-app.use(express.json())
-
+const connectDB=require("./db/connectDB")
+const mongoose=require("mongoose")
+const notFound=require("./middleware/not_found")
+const error_handler=require("./middleware/error_handles")
+const adminAuth=require("./middleware/adminAuth")
+const userAuth=require("./middleware/userAuth")
+const bodyParser = require("body-parser");
 const helmet=require("helmet");
 const cors=require("cors")
 const xss=require("xss-clean")
 const rateLimiter=require("express-rate-limit")
 
+app.use(express.json())
+
+
+
+
+mongoose.set('strictQuery', true);
+
+
+
+
+app.use(
+    bodyParser.urlencoded({
+      extended: true,
+    })
+  );
+
+
+  
 app.use(helmet())
 app.use(cors())
 app.use(xss())
@@ -30,14 +47,16 @@ app.get("/",(req,res)=>
     res.send("Ecom api/")
 })
 
+app.use('/uploads',express.static('uploads'))
+app.use("/admin",adminRoute)
+app.use("/user",userSignupRoute)
+app.use("/admin/prints",adminAuth,printRoute)
+app.use("/prints",printRoute)
 
-app.use("/login",userproductRoute)
-app.use("/admin",adminauth,adminRoute)
-app.use("/customer",customerregisterRoute)
-app.use("/customerOrders",customerauth,customerRoute)
-
-
-
+app.use("/admin/originals",adminAuth,originalsRoute)
+app.use("/originals",originalsRoute)
+app.use("/admin/cart",adminAuth,cartRoute)
+app.use("/cart",cartRoute)
 
 app.use(rateLimiter(
     {
@@ -50,22 +69,24 @@ app.use(rateLimiter(
 
 
 
-app.use(notfound)
-app.use(errorHandlerMiddleware)
-
-const start=async ()=>{
-    
+app.use(notFound)
+app.use(error_handler)
+const start=async ()=>
+{
     try{
         await connectDB(process.env.MONGO_URI)
         app.listen(port,()=>
-            {
-            console.log("server is listening ")
-            })
+        {
+            console.log("Server is listening")
+        })
     }
-    catch(error)
-    {
+    catch(error){
         console.log(error)
     }
+  
 }
 
+
 start()
+
+
